@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Avy Bluetooth</string>
+    <string name="back"><![CDATA[<]]></string>
+    <string name="open">OPEN</string>
+    <string name="stop">STOP</string>
+    <string name="close">CLOSE</string>
+    <string name="next"><![CDATA[>]]></string>
+    <string name="setting">Setting</string>
+    <string name="todo">TODO</string>
 </resources>

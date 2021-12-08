@@ -1,18 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/bg_home"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/imgLogoAvy"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:background="@mipmap/ic_logo_avy"
+        android:visibility="visible"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/imgSetup"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@mipmap/ic_setup" />
+
+    <RelativeLayout
+        android:id="@+id/layoutConnect"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="20dp"
+        android:background="#45151414"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/imgMenuListDevice"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:background="@mipmap/ic_menu_listdevice" />
+
+        <ImageView
+            android:id="@+id/imgBluetoothConnection"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:background="@mipmap/ic_bluetooth_disconnected" />
+
+        <TextView
+            android:id="@+id/txtNameBluetoothConnection"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:text="No Connected"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutColorRgb"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_above="@+id/layoutOnOffLed"
+        android:layout_below="@+id/layoutConnect"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="#45151414">
+
+        <RelativeLayout
+            android:id="@+id/llNameCabinet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp">
+
+            <Spinner
+                android:id="@+id/spNameCabinet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <ImageView
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:background="@mipmap/ic_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+
+        <ImageView
+            android:layout_below="@+id/llNameCabinet"
+            android:background="@mipmap/ic_rgb2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="40dp"
+            android:contentDescription="@string/todo" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutOnOffLed"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_above="@+id/btnOpenCloseCabinet"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="#45151414">
+
+        <Switch
+            android:id="@+id/swOnOffLed"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <SeekBar
+            android:id="@+id/sbAlphaRgb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/imgMaxAlpha"
+            android:layout_toRightOf="@+id/imgMinAlpha" />
+
+        <ImageView
+            android:id="@+id/imgMinAlpha"
+            android:layout_toEndOf="@+id/swOnOffLed"
+            android:layout_centerVertical="true"
+            android:background="@mipmap/ic_light"
+            android:layout_width="20dp"
+            android:layout_height="20dp"/>
+
+        <ImageView
+            android:id="@+id/imgMaxAlpha"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:background="@mipmap/ic_light"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnOpenCloseCabinet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="50dp"
+        android:layout_alignParentBottom="true"
+        android:text="@string/open" />
+
+    <include
+        android:id="@+id/layoutSetup"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/setup" />
+    <include
+        android:id="@+id/layoutListDevice"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/list_device" />
+
+</RelativeLayout>

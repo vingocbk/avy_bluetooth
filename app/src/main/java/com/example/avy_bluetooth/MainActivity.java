@@ -1,15 +1,45 @@
 package com.example.avy_bluetooth;
 
-import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothHeadset;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.ToneGenerator;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,16 +49,28 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import static android.R.layout.simple_list_item_1;
+import static android.R.layout.simple_spinner_dropdown_item;
+
 public class MainActivity extends AppCompatActivity {
+    ImageView imgSetup, imgMenuListDevice, imgBluetoothConnection;
+    View layoutSetup, layoutListDevice;
+    TextView txtBackSetting, txtBackListDevice, txtNameBluetoothConnection;
+
+    ProgressBar pgbRefreshListDevice;
+    ListView lvListDevice;
+
+    ArrayAdapter<String> arrayAdapterListDevice;
 
     public static int REQUEST_BLUETOOTH = 1;
     public static int REQUEST_DISCOVERABLE_BT = 1;
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-
-    boolean isSwitchStep = false;
 
     String TAG = "MainActivity";
     String deviceName;
@@ -40,11 +82,141 @@ public class MainActivity extends AppCompatActivity {
     //    private Handler handler;
     Object[] ObjectBluetooth;
 
-
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide(); // hide the title bar
+//        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN); //enable full screen
         setContentView(R.layout.activity_main);
+
+        Anhxa();
+
+        //--------------------------------------for bluetooth--------------------------------------------------------
+        BluetoothAdapter BTAdapter = BluetoothAdapter.getDefaultAdapter();
+        // Phone does not support Bluetooth so let the user know and exit.
+        if (BTAdapter == null) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Not compatible")
+                    .setMessage("Your phone does not support Bluetooth")
+                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+        if (!BTAdapter.isEnabled()) {
+            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBT, REQUEST_BLUETOOTH);
+        }
+        //------------------------------------------------------------------------------------------------------
+
+
+        //-------------------------------------------------------------------
+        imgSetup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                layoutSetup.setVisibility(View.VISIBLE);
+                if (mmDevice !=null && isConnected(mmDevice)) {
+                    String data = "{\"type\":\"get_status\",\"name\":\"\"}";
+                    byte[] bytes = data.getBytes(Charset.defaultCharset());
+                    mConnectedThread.write(bytes);
+                    layoutSetup.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        txtBackSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //btnControl.setVisibility(View.VISIBLE);
+                layoutSetup.setVisibility(View.GONE);
+
+            }
+        });
+        //------------------------------------------------------------------
+
+        imgMenuListDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                layoutListDevice.setVisibility(View.VISIBLE);
+//                imgRefreshListDevice.setVisibility(View.VISIBLE);
+                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                List<String> s = new ArrayList<String>();
+//                s.add("---Thiết bị đã ghép đôi---");
+                for(BluetoothDevice bt : pairedDevices){
+                    s.add(bt.getName() + "\n" + bt.getAddress());
+                }
+                ObjectBluetooth = pairedDevices.toArray();
+//                s.add("---Thiết bị hiện có---");
+                arrayAdapterListDevice = new ArrayAdapter<String>(
+                        MainActivity.this,
+                        simple_list_item_1,
+                        s );
+                lvListDevice.setAdapter(arrayAdapterListDevice);
+            }
+        });
+        txtBackListDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                layoutListDevice.setVisibility(View.INVISIBLE);
+                pgbRefreshListDevice.setVisibility(View.INVISIBLE);
+            }
+        });
+        lvListDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Log.i(TAG, arrayAdapterListDevice.getItem(i));
+
+                pgbRefreshListDevice.setVisibility(View.VISIBLE);
+                BluetoothDevice bluetoothDeviceConnect = (BluetoothDevice)ObjectBluetooth[i];
+
+                deviceName = bluetoothDeviceConnect.getName();
+                String deviceAddress = bluetoothDeviceConnect.getAddress();
+
+                Log.d(TAG, "onItemClick: deviceName = " + deviceName);
+                Log.d(TAG, "onItemClick: deviceAddress = " + deviceAddress);
+                Log.d(TAG, "Trying to Pair with " + deviceName);
+                bluetoothDeviceConnect.createBond();
+
+                mDeviceUUIDs = bluetoothDeviceConnect.getUuids();
+
+                Log.d(TAG, "Trying to create UUID: " + deviceName);
+
+                for (ParcelUuid uuid: mDeviceUUIDs) {
+                    Log.d(TAG, "UUID: " + uuid.getUuid().toString());
+                }
+
+//                ParcelUuid uuidExtra Intent intent = null;
+//                intent.getParcelableExtra("android.bluetooth.device.extra.UUID");
+//                UUID uuid = mDeviceUUIDs.getUuid();
+
+                ConnectThread connect = new ConnectThread(bluetoothDeviceConnect,MY_UUID_INSECURE);
+                connect.start();
+            }
+        });
+    }
+
+    public void Anhxa(){
+
+        imgSetup = findViewById(R.id.imgSetup);
+        txtBackSetting = findViewById(R.id.txtBackSetting);
+
+        layoutSetup = findViewById(R.id.layoutSetup);
+        layoutListDevice = findViewById(R.id.layoutListDevice);
+        pgbRefreshListDevice = findViewById(R.id.pgbRefreshListDevice);
+        imgMenuListDevice = findViewById(R.id.imgMenuListDevice);
+        txtBackListDevice = findViewById(R.id.txtBackListDevice);
+        lvListDevice = findViewById(R.id.lvListDevice);
+        imgBluetoothConnection = findViewById(R.id.imgBluetoothConnection);
+        txtNameBluetoothConnection = findViewById(R.id.txtNameBluetoothConnection);
+
     }
 
 
@@ -119,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void connected(BluetoothSocket mmSocket) {
         Log.d(TAG, "connected: Starting.");
+        pgbRefreshListDevice.setVisibility(View.INVISIBLE);
 
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = new ConnectedThread(mmSocket);
@@ -133,11 +306,14 @@ public class MainActivity extends AppCompatActivity {
 
                 // Stuff that updates the UI
 
+                layoutListDevice.setVisibility(View.INVISIBLE);
+                pgbRefreshListDevice.setVisibility(View.INVISIBLE);
+
+                imgBluetoothConnection.setBackgroundResource(R.mipmap.ic_bluetooth_connected);
+                txtNameBluetoothConnection.setText(deviceName);
+
             }
         });
-
-
-
 
 
     }
@@ -188,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "InputStream: " + incomingMessage);
                         JSONObject reader = new JSONObject(incomingMessage);
                         //all distant
-//                        data[0] = reader.getString("1-1");
+                        data[0] = reader.getString("1-1");
                         incomingMessage = "";
                     }
                     runOnUiThread(new Runnable() {
@@ -227,6 +403,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }
