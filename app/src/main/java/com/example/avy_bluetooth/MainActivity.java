@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -51,6 +52,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
     ProgressBar pgbRefreshListDevice;
     ListView lvListDevice;
+    //Main Control
+    Button btnMainOpenCloseCabinet;
+    RelativeLayout layoutColorRgb, layoutOnOffLed;
+
 
     ArrayAdapter<String> arrayAdapterListDevice;
 
@@ -86,12 +92,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide(); // hide the title bar
+        Objects.requireNonNull(getSupportActionBar()).hide(); // hide the title bar
 //        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN); //enable full screen
         setContentView(R.layout.activity_main);
 
-        Anhxa();
+        anhXa();
 
         //--------------------------------------for bluetooth--------------------------------------------------------
         BluetoothAdapter BTAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -108,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
+        assert BTAdapter != null;
         if (!BTAdapter.isEnabled()) {
             Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBT, REQUEST_BLUETOOTH);
@@ -120,6 +127,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 layoutSetup.setVisibility(View.VISIBLE);
+                layoutColorRgb.setVisibility(View.GONE);
+                layoutOnOffLed.setVisibility(View.GONE);
+                btnMainOpenCloseCabinet.setVisibility(View.GONE);
                 if (mmDevice !=null && isConnected(mmDevice)) {
                     String data = "{\"type\":\"get_status\",\"name\":\"\"}";
                     byte[] bytes = data.getBytes(Charset.defaultCharset());
@@ -134,7 +144,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //btnControl.setVisibility(View.VISIBLE);
                 layoutSetup.setVisibility(View.GONE);
-
+                btnMainOpenCloseCabinet.setVisibility(View.VISIBLE);
+                layoutColorRgb.setVisibility(View.VISIBLE);
+                layoutOnOffLed.setVisibility(View.VISIBLE);
             }
         });
         //------------------------------------------------------------------
@@ -203,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void Anhxa(){
+    public void anhXa(){
 
         imgSetup = findViewById(R.id.imgSetup);
         txtBackSetting = findViewById(R.id.txtBackSetting);
@@ -217,6 +229,10 @@ public class MainActivity extends AppCompatActivity {
         imgBluetoothConnection = findViewById(R.id.imgBluetoothConnection);
         txtNameBluetoothConnection = findViewById(R.id.txtNameBluetoothConnection);
 
+        //main menu
+        btnMainOpenCloseCabinet = findViewById(R.id.btnMainOpenCloseCabinet);
+        layoutColorRgb = findViewById(R.id.layoutColorRgb);
+        layoutOnOffLed = findViewById(R.id.layoutOnOffLed);
     }
 
 

@@ -7,4 +7,14 @@
     <string name="next"><![CDATA[>]]></string>
     <string name="setting">Setting</string>
     <string name="todo">TODO</string>
+    <string name="map_name">Mapping Name</string>
+    <string name="send">Send</string>
+    <string name="set_time_return">Set Time Return</string>
+    <string name="set_mode_run">Set Mode Run</string>
+    <string name="delay_push">Delay Push</string>
+    <string name="max_value_push">Max Value Push</string>
+    <string name="time_auto_close">Time Auto Close</string>
+    <string name="percent_slow_speed">Percent Slow Speed</string>
+    <string name="min_stop_speed">Min Stop Speed</string>
+    <string name="reset_distant">Reset Distant</string>
 </resources>

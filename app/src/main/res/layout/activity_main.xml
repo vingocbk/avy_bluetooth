@@ -74,12 +74,12 @@
         android:background="#45151414">
 
         <RelativeLayout
-            android:id="@+id/llNameCabinet"
+            android:id="@+id/rlNameCabinet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp">
+            android:layout_marginEnd="20dp">
 
             <Spinner
                 android:id="@+id/spNameCabinet"
@@ -88,20 +88,21 @@
                 android:layout_centerInParent="true" />
 
             <ImageView
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:background="@mipmap/ic_refresh"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@mipmap/ic_refresh"
+                android:contentDescription="@string/todo" />
         </RelativeLayout>
 
 
         <ImageView
-            android:layout_below="@+id/llNameCabinet"
-            android:background="@mipmap/ic_rgb2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/rlNameCabinet"
             android:layout_margin="40dp"
+            android:background="@mipmap/ic_rgb2"
             android:contentDescription="@string/todo" />
 
     </RelativeLayout>
@@ -110,7 +111,7 @@
         android:id="@+id/layoutOnOffLed"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_above="@+id/btnOpenCloseCabinet"
+        android:layout_above="@+id/btnMainOpenCloseCabinet"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
@@ -118,9 +119,9 @@
 
         <Switch
             android:id="@+id/swOnOffLed"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <SeekBar
@@ -133,30 +134,30 @@
 
         <ImageView
             android:id="@+id/imgMinAlpha"
-            android:layout_toEndOf="@+id/swOnOffLed"
-            android:layout_centerVertical="true"
-            android:background="@mipmap/ic_light"
             android:layout_width="20dp"
-            android:layout_height="20dp"/>
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/swOnOffLed"
+            android:background="@mipmap/ic_light" />
 
         <ImageView
             android:id="@+id/imgMaxAlpha"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:background="@mipmap/ic_light"
             android:layout_width="40dp"
-            android:layout_height="40dp"/>
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@mipmap/ic_light" />
 
     </RelativeLayout>
 
     <Button
-        android:id="@+id/btnOpenCloseCabinet"
+        android:id="@+id/btnMainOpenCloseCabinet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="50dp"
-        android:layout_alignParentBottom="true"
         android:text="@string/open" />
 
     <include
