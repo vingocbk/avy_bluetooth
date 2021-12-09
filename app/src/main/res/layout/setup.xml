@@ -40,214 +40,355 @@
             android:contentDescription="@string/todo" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rlMapName"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_height="match_parent"
         android:layout_below="@+id/rlTitle"
-        android:background="#45151414"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/txtMapName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/map_name" />
-        <LinearLayout
-            android:layout_below="@+id/txtMapName"
-            android:weightSum="3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Spinner
-                android:id="@+id/spSettingNameCabinet"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingNewNameCabinet"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:autofillHints="new name" />
-            <LinearLayout
-                android:layout_weight="1"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <Button
-                    android:id="@+id/btnSettingMappingNameCabinet"
-                    android:text="@string/send"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/rlSetting"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_below="@+id/rlMapName"
-        android:layout_alignParentBottom="true"
-        android:background="#45151414"
-        android:orientation="vertical">
-        <TextView
-            android:layout_gravity="center"
-            android:text="@string/setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp">
         <LinearLayout
-            android:weightSum="2"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/set_time_return"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:id="@+id/rlMapName"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingTimeReturn"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
-        <LinearLayout
-            android:weightSum="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/set_mode_run"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingModeRun"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
-        <LinearLayout
-            android:weightSum="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/delay_push"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingDelayPush"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
-        <LinearLayout
-            android:weightSum="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/max_value_push"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingMaxValuePush"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:background="#45151414"
+                android:gravity="center_vertical">
 
-        <LinearLayout
-            android:weightSum="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/time_auto_close"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingTimeAutoClose"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
-        <LinearLayout
-            android:weightSum="4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/percent_slow_speed"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingPercentLowIn"
-                android:layout_weight="1.5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingPercentLowOut"
-                android:layout_weight="1.5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
-        <LinearLayout
-            android:weightSum="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/min_stop_speed"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <EditText
-                android:id="@+id/edtSettingMinStopSpeed"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
-        <LinearLayout
-            android:weightSum="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/reset_distant"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <LinearLayout
-                android:layout_weight="1"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <CheckBox
-                    android:id="@+id/cbSettingResetDistant"
+                <TextView
+                    android:id="@+id/txtMapName"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/map_name" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtMapName"
+                    android:weightSum="3">
+
+                    <Spinner
+                        android:id="@+id/spSettingNameCabinet"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <EditText
+                        android:id="@+id/edtSettingNewNameCabinet"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:autofillHints="new name" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <Button
+                            android:id="@+id/btnSettingMappingNameCabinet"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/send" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutSetIdDevice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#45151414"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/set_device_id" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <EditText
+                        android:id="@+id/edtSetDeviceID"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="30dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:gravity="center">
+
+                        <Button
+                            android:id="@+id/btnSettingSetIdDevice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/send" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutSetAllDevice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#45151414"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/set_all_cabinet" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <EditText
+                        android:id="@+id/edtSetDeviceIDStart"
+                        android:hint="Start"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                    <EditText
+                        android:id="@+id/edtSetDeviceIDEnd"
+                        android:hint="End"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <Button
+                            android:id="@+id/btnSettingSetAllDevice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/send" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rlSetting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="#45151414"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/setting" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/set_time_return" />
+
+                    <EditText
+                        android:id="@+id/edtSettingTimeReturn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/set_mode_run" />
+
+                    <EditText
+                        android:id="@+id/edtSettingModeRun"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/delay_push" />
+
+                    <EditText
+                        android:id="@+id/edtSettingDelayPush"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/max_value_push" />
+
+                    <EditText
+                        android:id="@+id/edtSettingMaxValuePush"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/time_auto_close" />
+
+                    <EditText
+                        android:id="@+id/edtSettingTimeAutoClose"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="4">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/percent_slow_speed" />
+
+                    <EditText
+                        android:id="@+id/edtSettingPercentLowIn"
+                        android:hint="In"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5" />
+
+                    <EditText
+                        android:id="@+id/edtSettingPercentLowOut"
+                        android:hint="Out"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/min_stop_speed" />
+
+                    <EditText
+                        android:id="@+id/edtSettingMinStopSpeed"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/reset_distant" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <CheckBox
+                            android:id="@+id/cbSettingResetDistant"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnSettingSendDataSetup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/send" />
+
             </LinearLayout>
         </LinearLayout>
-        <Button
-            android:id="@+id/btnSettingSendDataSetup"
-            android:layout_gravity="center"
-            android:text="@string/send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
-    </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+
+
+
 
 </RelativeLayout>

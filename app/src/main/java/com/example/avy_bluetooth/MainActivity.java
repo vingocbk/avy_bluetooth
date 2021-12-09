@@ -29,6 +29,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -51,6 +52,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -62,17 +64,37 @@ import static android.R.layout.simple_spinner_dropdown_item;
 public class MainActivity extends AppCompatActivity {
     ImageView imgSetup, imgMenuListDevice, imgBluetoothConnection;
     View layoutSetup, layoutListDevice;
-    TextView txtBackSetting, txtBackListDevice, txtNameBluetoothConnection;
+    TextView txtBackListDevice, txtNameBluetoothConnection;
 
     ProgressBar pgbRefreshListDevice;
     ListView lvListDevice;
+
+    Bitmap bitmap;
     //Main Control
     Button btnMainOpenCloseCabinet;
     RelativeLayout layoutColorRgb, layoutOnOffLed;
+    ImageView imgRefreshNameDevice, imgRgbColor;
+    Spinner spNameCabinet;
+    Switch swOnOffLed;
+    SeekBar sbAlphaRgb;
+
+    //Setup layout
+    TextView txtBackSetting;
+    Spinner spSettingNameCabinet;
+    EditText edtSettingNewNameCabinet;
+    Button btnSettingMappingNameCabinet;
+    EditText edtSetDeviceID;
+    Button btnSettingSetIdDevice;
+    EditText edtSetDeviceIDStart, edtSetDeviceIDEnd;
+    Button btnSettingSetAllDevice;
+    EditText edtSettingTimeReturn, edtSettingModeRun, edtSettingDelayPush, edtSettingMaxValuePush,
+            edtSettingTimeAutoClose, edtSettingPercentLowIn, edtSettingPercentLowOut, edtSettingMinStopSpeed;
+    CheckBox cbSettingResetDistant;
+    Button btnSettingSendDataSetup;
 
 
     ArrayAdapter<String> arrayAdapterListDevice;
-
+    int mRed = 255, mGreen = 255, mBlue = 255;
     public static int REQUEST_BLUETOOTH = 1;
     public static int REQUEST_DISCOVERABLE_BT = 1;
     private static final UUID MY_UUID_INSECURE =
@@ -88,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     //    private Handler handler;
     Object[] ObjectBluetooth;
 
+    HashMap<String, Integer> hMapName = new HashMap<String, Integer>();
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 //                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN); //enable full screen
         setContentView(R.layout.activity_main);
 
-        anhXa();
+        initLayout();
 
         //--------------------------------------for bluetooth--------------------------------------------------------
         BluetoothAdapter BTAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -129,13 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 layoutSetup.setVisibility(View.VISIBLE);
                 layoutColorRgb.setVisibility(View.GONE);
                 layoutOnOffLed.setVisibility(View.GONE);
-                btnMainOpenCloseCabinet.setVisibility(View.GONE);
-                if (mmDevice !=null && isConnected(mmDevice)) {
-                    String data = "{\"type\":\"get_status\",\"name\":\"\"}";
-                    byte[] bytes = data.getBytes(Charset.defaultCharset());
-                    mConnectedThread.write(bytes);
-                    layoutSetup.setVisibility(View.VISIBLE);
-                }
+//                btnMainOpenCloseCabinet.setVisibility(View.GONE);
             }
         });
 
@@ -144,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //btnControl.setVisibility(View.VISIBLE);
                 layoutSetup.setVisibility(View.GONE);
-                btnMainOpenCloseCabinet.setVisibility(View.VISIBLE);
+//                btnMainOpenCloseCabinet.setVisibility(View.VISIBLE);
                 layoutColorRgb.setVisibility(View.VISIBLE);
                 layoutOnOffLed.setVisibility(View.VISIBLE);
             }
@@ -155,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 layoutListDevice.setVisibility(View.VISIBLE);
-//                imgRefreshListDevice.setVisibility(View.VISIBLE);
+//                btnMainOpenCloseCabinet.setVisibility(View.INVISIBLE);
                 BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
                 List<String> s = new ArrayList<String>();
@@ -175,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         txtBackListDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                btnMainOpenCloseCabinet.setVisibility(View.VISIBLE);
                 layoutListDevice.setVisibility(View.INVISIBLE);
                 pgbRefreshListDevice.setVisibility(View.INVISIBLE);
             }
@@ -213,9 +230,117 @@ public class MainActivity extends AppCompatActivity {
                 connect.start();
             }
         });
+
+        //------------------------------CONTROL MAIN MENU------------------------------------
+        imgRefreshNameDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mmDevice !=null && isConnected(mmDevice)) {
+                    String data = "{\"type\":\"get_name\"}";
+                    byte[] bytes = data.getBytes(Charset.defaultCharset());
+                    mConnectedThread.write(bytes);
+                    layoutSetup.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        imgRgbColor.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN || motionEvent.getAction() == MotionEvent.ACTION_MOVE){
+                    bitmap = imgRgbColor.getDrawingCache();
+                    int pixel = bitmap.getPixel((int)motionEvent.getX(), (int)motionEvent.getY());
+                    mRed = Color.red(pixel);
+                    mGreen = Color.green(pixel);
+                    mBlue = Color.blue(pixel);
+                    Log.d(TAG, String.valueOf(mRed) + " - " + String.valueOf(mGreen) + " - " + String.valueOf(mBlue));
+                    if (mmDevice !=null && isConnected(mmDevice)) {
+                        String data = "{\"type\":\"change_led\",\"data\":[";
+                        data += String.valueOf(mRed);
+                        data += ",";
+                        data += String.valueOf(mGreen);
+                        data += ",";
+                        data += String.valueOf(mBlue);
+                        data += "]}";
+                        byte[] bytes = data.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    }
+                }
+                return false;
+            }
+        });
+        swOnOffLed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (mmDevice !=null && isConnected(mmDevice)) {
+                    if(b){
+                        String data = "{\"type\":\"change_led\",\"data\":[";
+                        data += String.valueOf(mRed);
+                        data += ",";
+                        data += String.valueOf(mGreen);
+                        data += ",";
+                        data += String.valueOf(mBlue);
+                        data += "]}";
+                        byte[] bytes = data.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    }
+                    else{
+                        String data = "{\"type\":\"change_led\",\"id\":\"" +
+//                                sp.valueOf()+
+                                "\",\"data\":[0,0,0]}";
+                        byte[] bytes = data.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    }
+                }
+            }
+        });
+        sbAlphaRgb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.d(TAG, String.valueOf(sbAlphaRgb.getProgress()));
+                if (mmDevice !=null && isConnected(mmDevice)) {
+                    String data = "{\"type\":\"change_led\",\"data\":[";
+                    data += String.valueOf(mRed*sbAlphaRgb.getProgress()/100);
+                    data += ",";
+                    data += String.valueOf(mGreen*sbAlphaRgb.getProgress()/100);
+                    data += ",";
+                    data += String.valueOf(mBlue*sbAlphaRgb.getProgress()/100);
+                    data += "]}";
+                    byte[] bytes = data.getBytes(Charset.defaultCharset());
+                    mConnectedThread.write(bytes);
+                }
+            }
+        });
+        btnMainOpenCloseCabinet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mmDevice !=null && isConnected(mmDevice)) {
+                    if (btnMainOpenCloseCabinet.getText().equals("OPEN")) {
+                        btnMainOpenCloseCabinet.setText("CLOSE");
+                        String data = "{\"type\":\"control\",\"data\":\"close\"}";
+                        byte[] bytes = data.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    } else {
+                        btnMainOpenCloseCabinet.setText("OPEN");
+                        String data = "{\"type\":\"control\",\"data\":\"open\"}";
+                        byte[] bytes = data.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    }
+                }
+            }
+        });
     }
 
-    public void anhXa(){
+    public void initLayout(){
 
         imgSetup = findViewById(R.id.imgSetup);
         txtBackSetting = findViewById(R.id.txtBackSetting);
@@ -233,6 +358,37 @@ public class MainActivity extends AppCompatActivity {
         btnMainOpenCloseCabinet = findViewById(R.id.btnMainOpenCloseCabinet);
         layoutColorRgb = findViewById(R.id.layoutColorRgb);
         layoutOnOffLed = findViewById(R.id.layoutOnOffLed);
+        imgRefreshNameDevice = findViewById(R.id.imgRefreshNameDevice);
+        imgRgbColor = findViewById(R.id.imgRgbColor);
+        imgRgbColor.setDrawingCacheEnabled(true);
+        imgRgbColor.buildDrawingCache(true);
+        spNameCabinet = findViewById(R.id.spNameCabinet);
+        swOnOffLed = findViewById(R.id.swOnOffLed);
+        swOnOffLed.setChecked(true);
+        sbAlphaRgb = findViewById(R.id.sbAlphaRgb);
+        sbAlphaRgb.setProgress(100);
+
+        //setup layout
+        txtBackSetting = findViewById(R.id.txtBackSetting);
+        spSettingNameCabinet = findViewById(R.id.spSettingNameCabinet);
+        edtSettingNewNameCabinet = findViewById(R.id.edtSettingNewNameCabinet);
+        btnSettingMappingNameCabinet = findViewById(R.id.btnSettingMappingNameCabinet);
+        edtSetDeviceID = findViewById(R.id.edtSetDeviceID);
+        btnSettingSetIdDevice = findViewById(R.id.btnSettingSetIdDevice);
+        edtSetDeviceIDStart = findViewById(R.id.edtSetDeviceIDStart);
+        edtSetDeviceIDEnd = findViewById(R.id.edtSetDeviceIDEnd);
+        btnSettingSetAllDevice = findViewById(R.id.btnSettingSetAllDevice);
+        edtSettingTimeReturn = findViewById(R.id.edtSettingTimeReturn);
+        edtSettingModeRun = findViewById(R.id.edtSettingModeRun);
+        edtSettingDelayPush = findViewById(R.id.edtSettingDelayPush);
+        edtSettingMaxValuePush = findViewById(R.id.edtSettingMaxValuePush);
+        edtSettingTimeAutoClose = findViewById(R.id.edtSettingTimeAutoClose);
+        edtSettingPercentLowIn = findViewById(R.id.edtSettingPercentLowIn);
+        edtSettingPercentLowOut = findViewById(R.id.edtSettingPercentLowOut);
+        edtSettingMinStopSpeed = findViewById(R.id.edtSettingMinStopSpeed);
+        cbSettingResetDistant = findViewById(R.id.cbSettingResetDistant);
+        btnSettingSendDataSetup = findViewById(R.id.btnSettingSendDataSetup);
+
     }
 
 
@@ -366,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] readBuffer = new byte[1024];;
             int readBufferPosition = 0;
             String incomingMessage = "";
-            String data[] = new String[24];
+            String[] data = new String[24];
             // Keep listening to the InputStream until an exception occurs
             while (true) {
 

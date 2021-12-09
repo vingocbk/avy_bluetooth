@@ -17,4 +17,6 @@
     <string name="percent_slow_speed">Percent Slow Speed</string>
     <string name="min_stop_speed">Min Stop Speed</string>
     <string name="reset_distant">Reset Distant</string>
+    <string name="set_device_id">Set Device ID</string>
+    <string name="set_all_cabinet">Set All Cabinet</string>
 </resources>
