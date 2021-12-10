@@ -122,6 +122,7 @@
 
                     <EditText
                         android:id="@+id/edtSetDeviceID"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginStart="30dp"
@@ -165,12 +166,14 @@
                     <EditText
                         android:id="@+id/edtSetDeviceIDStart"
                         android:hint="Start"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
                     <EditText
                         android:id="@+id/edtSetDeviceIDEnd"
                         android:hint="End"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
@@ -219,6 +222,7 @@
 
                     <EditText
                         android:id="@+id/edtSettingTimeReturn"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
@@ -238,6 +242,7 @@
 
                     <EditText
                         android:id="@+id/edtSettingModeRun"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
@@ -257,6 +262,7 @@
 
                     <EditText
                         android:id="@+id/edtSettingDelayPush"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
@@ -276,6 +282,7 @@
 
                     <EditText
                         android:id="@+id/edtSettingMaxValuePush"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
@@ -295,6 +302,7 @@
 
                     <EditText
                         android:id="@+id/edtSettingTimeAutoClose"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
@@ -315,6 +323,7 @@
                     <EditText
                         android:id="@+id/edtSettingPercentLowIn"
                         android:hint="In"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1.5" />
@@ -322,6 +331,7 @@
                     <EditText
                         android:id="@+id/edtSettingPercentLowOut"
                         android:hint="Out"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1.5" />
@@ -341,6 +351,7 @@
 
                     <EditText
                         android:id="@+id/edtSettingMinStopSpeed"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />

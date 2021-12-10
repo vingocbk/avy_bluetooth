@@ -43,6 +43,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout layoutColorRgb, layoutOnOffLed;
     ImageView imgRefreshNameDevice, imgRgbColor;
     Spinner spNameCabinet;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch swOnOffLed;
     SeekBar sbAlphaRgb;
 
@@ -110,7 +112,9 @@ public class MainActivity extends AppCompatActivity {
     //    private Handler handler;
     Object[] ObjectBluetooth;
 
-    HashMap<String, Integer> hMapName = new HashMap<String, Integer>();
+    HashMap<String, Integer> hMapNameDevice = new HashMap<String, Integer>();
+    List<String> list = new ArrayList<>();
+    int idStart, idEnd;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,29 +125,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initLayout();
-
-        //--------------------------------------for bluetooth--------------------------------------------------------
-        BluetoothAdapter BTAdapter = BluetoothAdapter.getDefaultAdapter();
-        // Phone does not support Bluetooth so let the user know and exit.
-        if (BTAdapter == null) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Not compatible")
-                    .setMessage("Your phone does not support Bluetooth")
-                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            System.exit(0);
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        }
-        assert BTAdapter != null;
-        if (!BTAdapter.isEnabled()) {
-            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBT, REQUEST_BLUETOOTH);
-        }
-        //------------------------------------------------------------------------------------------------------
-
+        checkTurnOnBluetooth();
 
         //-------------------------------------------------------------------
         imgSetup.setOnClickListener(new View.OnClickListener() {
@@ -239,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
                     String data = "{\"type\":\"get_name\"}";
                     byte[] bytes = data.getBytes(Charset.defaultCharset());
                     mConnectedThread.write(bytes);
-                    layoutSetup.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -254,7 +235,9 @@ public class MainActivity extends AppCompatActivity {
                     mBlue = Color.blue(pixel);
                     Log.d(TAG, String.valueOf(mRed) + " - " + String.valueOf(mGreen) + " - " + String.valueOf(mBlue));
                     if (mmDevice !=null && isConnected(mmDevice)) {
-                        String data = "{\"type\":\"change_led\",\"data\":[";
+                        String data = "{\"type\":\"change_rgb\",\"id\":" +
+                                String.valueOf(idStart+spNameCabinet.getSelectedItemPosition()) +
+                                ",\"data\":[";
                         data += String.valueOf(mRed);
                         data += ",";
                         data += String.valueOf(mGreen);
@@ -273,7 +256,9 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (mmDevice !=null && isConnected(mmDevice)) {
                     if(b){
-                        String data = "{\"type\":\"change_led\",\"data\":[";
+                        String data = "{\"type\":\"change_rgb\",\"id\":" +
+                                String.valueOf(idStart+spNameCabinet.getSelectedItemPosition()) +
+                                ",\"data\":[";
                         data += String.valueOf(mRed);
                         data += ",";
                         data += String.valueOf(mGreen);
@@ -284,9 +269,9 @@ public class MainActivity extends AppCompatActivity {
                         mConnectedThread.write(bytes);
                     }
                     else{
-                        String data = "{\"type\":\"change_led\",\"id\":\"" +
-//                                sp.valueOf()+
-                                "\",\"data\":[0,0,0]}";
+                        String data = "{\"type\":\"change_rgb\",\"id\":" +
+                                String.valueOf(idStart+spNameCabinet.getSelectedItemPosition()) +
+                                ",\"data\":[0,0,0]}";
                         byte[] bytes = data.getBytes(Charset.defaultCharset());
                         mConnectedThread.write(bytes);
                     }
@@ -308,7 +293,9 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d(TAG, String.valueOf(sbAlphaRgb.getProgress()));
                 if (mmDevice !=null && isConnected(mmDevice)) {
-                    String data = "{\"type\":\"change_led\",\"data\":[";
+                    String data = "{\"type\":\"change_rgb\",\"id\":" +
+                            String.valueOf(idStart+spNameCabinet.getSelectedItemPosition()) +
+                            ",\"data\":[";
                     data += String.valueOf(mRed*sbAlphaRgb.getProgress()/100);
                     data += ",";
                     data += String.valueOf(mGreen*sbAlphaRgb.getProgress()/100);
@@ -326,14 +313,155 @@ public class MainActivity extends AppCompatActivity {
                 if (mmDevice !=null && isConnected(mmDevice)) {
                     if (btnMainOpenCloseCabinet.getText().equals("OPEN")) {
                         btnMainOpenCloseCabinet.setText("CLOSE");
-                        String data = "{\"type\":\"control\",\"data\":\"close\"}";
+                        String data = "{\"type\":\"control\",\"id\":" +
+                                String.valueOf(idStart+spNameCabinet.getSelectedItemPosition()) +
+                                ",\"data\":\"close\"}";
                         byte[] bytes = data.getBytes(Charset.defaultCharset());
                         mConnectedThread.write(bytes);
                     } else {
                         btnMainOpenCloseCabinet.setText("OPEN");
-                        String data = "{\"type\":\"control\",\"data\":\"open\"}";
+                        String data = "{\"type\":\"control\",\"id\":" +
+                                String.valueOf(idStart+spNameCabinet.getSelectedItemPosition()) +
+                                ",\"data\":\"open\"}";
                         byte[] bytes = data.getBytes(Charset.defaultCharset());
                         mConnectedThread.write(bytes);
+                    }
+                }
+            }
+        });
+
+
+        //------------------------------CONTROL SETTING MENU------------------------------------
+        btnSettingMappingNameCabinet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mmDevice !=null && isConnected(mmDevice))
+                {
+                    try {
+                        JSONObject j = new JSONObject();
+                        j.put("type", "mapping_name");
+                        j.put("index", String.valueOf(spSettingNameCabinet.getSelectedItemPosition()));
+                        j.put("name", edtSettingNewNameCabinet.getText().toString());
+                        String dataSend = j.toString();
+                        byte[] bytes = dataSend.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        btnSettingSetIdDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mmDevice !=null && isConnected(mmDevice))
+                {
+                    try {
+                        JSONObject j = new JSONObject();
+                        j.put("type", "set_id");
+                        j.put("id", edtSetDeviceID.getText().toString());
+                        String dataSend = j.toString();
+                        byte[] bytes = dataSend.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        btnSettingSetAllDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mmDevice !=null && isConnected(mmDevice))
+                {
+                    try {
+                        JSONObject j = new JSONObject();
+                        j.put("type", "set_all_device");
+                        j.put("id_start", edtSetDeviceIDStart.getText().toString());
+                        j.put("id_end", edtSetDeviceIDEnd.getText().toString());
+                        String dataSend = j.toString();
+                        byte[] bytes = dataSend.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        btnSettingSendDataSetup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mmDevice !=null && isConnected(mmDevice))
+                {
+                    try {
+                        JSONObject j = new JSONObject();
+                        j.put("type", "setting");
+                        j.put("id", idStart + spSettingNameCabinet.getSelectedItemPosition());
+                        JSONArray dataArray = new JSONArray();
+                        if(!edtSettingTimeReturn.getText().toString().equals("")){
+                            dataArray.put(Integer.parseInt(edtSettingTimeReturn.getText().toString()));
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        if(!edtSettingModeRun.getText().toString().equals("")){
+                            dataArray.put(Integer.parseInt(edtSettingModeRun.getText().toString()));
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        if(!edtSettingDelayPush.getText().toString().equals("")){
+                            dataArray.put(Integer.parseInt(edtSettingDelayPush.getText().toString()));
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        if(!edtSettingMaxValuePush.getText().toString().equals("")){
+                            dataArray.put(Integer.parseInt(edtSettingMaxValuePush.getText().toString()));
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        if(!edtSettingTimeAutoClose.getText().toString().equals("")){
+                            dataArray.put(Integer.parseInt(edtSettingTimeAutoClose.getText().toString()));
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        if(!edtSettingPercentLowIn.getText().toString().equals("")){
+                            dataArray.put(Integer.parseInt(edtSettingPercentLowIn.getText().toString()));
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        if(!edtSettingPercentLowOut.getText().toString().equals("")){
+                            dataArray.put(Integer.parseInt(edtSettingPercentLowOut.getText().toString()));
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        if(!edtSettingMinStopSpeed.getText().toString().equals("")){
+                            dataArray.put(Integer.parseInt(edtSettingMinStopSpeed.getText().toString()));
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        if(cbSettingResetDistant.isChecked()){
+                            dataArray.put(1);
+                        }
+                        else{
+                            dataArray.put(0);
+                        }
+                        j.put("data", dataArray);
+                        String dataSend = j.toString();
+                        byte[] bytes = dataSend.getBytes(Charset.defaultCharset());
+                        mConnectedThread.write(bytes);
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
                 }
             }
@@ -389,8 +517,39 @@ public class MainActivity extends AppCompatActivity {
         cbSettingResetDistant = findViewById(R.id.cbSettingResetDistant);
         btnSettingSendDataSetup = findViewById(R.id.btnSettingSendDataSetup);
 
+
+        list.add("No Device");
+        //ArrayAdapter spinAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, list);
+        ArrayAdapter spinnerAdapter = new ArrayAdapter<>(this, R.layout.spinner_list, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_list);
+        spNameCabinet.setAdapter(spinnerAdapter);
+        spSettingNameCabinet.setAdapter(spinnerAdapter);
+
     }
 
+    public void checkTurnOnBluetooth(){
+        //--------------------------------------for bluetooth--------------------------------------------------------
+        BluetoothAdapter BTAdapter = BluetoothAdapter.getDefaultAdapter();
+        // Phone does not support Bluetooth so let the user know and exit.
+        if (BTAdapter == null) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Not compatible")
+                    .setMessage("Your phone does not support Bluetooth")
+                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+        assert BTAdapter != null;
+        if (!BTAdapter.isEnabled()) {
+            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBT, REQUEST_BLUETOOTH);
+        }
+        //------------------------------------------------------------------------------------------------------
+    }
 
     public static boolean isBluetoothHeadsetConnected() {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -471,6 +630,11 @@ public class MainActivity extends AppCompatActivity {
 
 //        byte[] bytes = "abcd".getBytes(Charset.defaultCharset());
 //        mConnectedThread.write(bytes);
+        if (mmDevice !=null && isConnected(mmDevice)) {
+            String data = "{\"type\":\"get_name\"}";
+            byte[] bytes = data.getBytes(Charset.defaultCharset());
+            mConnectedThread.write(bytes);
+        }
 
         runOnUiThread(new Runnable() {
             @Override
@@ -528,38 +692,48 @@ public class MainActivity extends AppCompatActivity {
 
                 // Read from the InputStream
                 try {
-
                     bytes = mmInStream.read(buffer);
-
                     incomingMessage += new String(buffer, 0, bytes);
                     if(incomingMessage.contains("}")){
                         Log.d(TAG, "InputStream: " + incomingMessage);
                         JSONObject reader = new JSONObject(incomingMessage);
                         //all distant
-                        data[0] = reader.getString("1-1");
+//                        data[0] = reader.getString("1-1");
                         incomingMessage = "";
-                    }
-                    runOnUiThread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            //-------
-//                            txtViewDistantMotor1.setText(data[0]);
+                        if(reader.has("id_start")) {
+                            idStart = reader.getInt("id_start");
+                            idEnd = reader.getInt("id_end");
+                            JSONArray arrayName= reader.getJSONArray("name");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    edtSetDeviceIDStart.setText(String.valueOf(idStart));
+                                    edtSetDeviceIDEnd.setText(String.valueOf(idEnd));
+                                    list.clear();
+                                    for(int i = 0; i < arrayName.length(); i++){
+                                        try {
+                                            list.add(arrayName.getString(i));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+//                                        spNameCabinet.setSelection(1);
+                                    }
+                                }
+                            });
                         }
-                    });
-
-
+                    }
                 } catch (IOException | JSONException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage());
 //                    Toast.makeText(MainActivity.this, "Kết nối thất bại", Toast.LENGTH_SHORT).show();
-                    break;
+//                    break;
                 }
             }
         }
 
         public void write(byte[] bytes) {
             String text = new String(bytes, Charset.defaultCharset());
-            Log.d(TAG, "write: Writing to outputstream: " + text);
+            Log.d(TAG, "write: Writing to outputStream: " + text);
             try {
                 mmOutStream.write(bytes);
             } catch (IOException e) {
